@@ -1,0 +1,264 @@
+:root {
+  --page: #ddd8cd;
+  --page-deep: #ccc6b7;
+  --body: #26262a;
+  --body-rim: rgba(255, 255, 255, 0.08);
+  --lcd: #ccd2bf;
+  --lcd-deep: #bec4b0;
+  --lcd-text: #262b20;
+  --lcd-error: #7c3120;
+  --key-face: #ded9cf;
+  --key-face-hi: #ece8df;
+  --key-text: #2b2822;
+  --key-fn: #47474c;
+  --key-fn-hi: #58585e;
+  --key-fn-text: #eae8e1;
+  --key-op: #d1932f;
+  --key-op-hi: #e2a94d;
+  --key-op-down: #a8741f;
+  --key-op-text: #33230b;
+  --key-ac: #99452f;
+  --key-ac-hi: #ae573f;
+  --key-ac-text: #f5eae5;
+  --key-eq: #445f4b;
+  --key-eq-hi: #567258;
+  --key-eq-text: #eef2ea;
+  --key-edge: rgba(0, 0, 0, 0.45);
+  --focus: #e2a94d;
+  --font-keys: 'Futura', 'Avenir Next', 'Century Gothic', 'Trebuchet MS', sans-serif;
+  --font-lcd: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #141417;
+    --page-deep: #0c0c0e;
+    --body: #1f1f23;
+    --body-rim: rgba(255, 255, 255, 0.06);
+    --lcd: #b2b8a3;
+    --lcd-deep: #a3a994;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: radial-gradient(120% 90% at 50% 12%, var(--page), var(--page-deep));
+  color: var(--key-text);
+  font-family: var(--font-keys);
+}
+
+.app {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.calculator {
+  width: 100%;
+  max-width: 336px;
+  background: var(--body);
+  border-radius: 26px;
+  border-top: 1px solid var(--body-rim);
+  padding: 20px 15px 15px;
+  box-shadow:
+    0 24px 48px rgba(20, 16, 8, 0.35),
+    0 3px 8px rgba(20, 16, 8, 0.3);
+}
+
+.lcd {
+  position: relative;
+  margin: 0 3px 16px;
+  padding: 22px 12px 9px;
+  background: linear-gradient(var(--lcd), var(--lcd-deep));
+  border-radius: 7px;
+  box-shadow:
+    inset 0 3px 7px rgba(15, 18, 10, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.lcd-indicator {
+  position: absolute;
+  top: 7px;
+  left: 12px;
+  min-height: 1em;
+  font-family: var(--font-lcd);
+  font-size: 0.85rem;
+  color: var(--lcd-text);
+  opacity: 0.65;
+}
+
+.display {
+  display: block;
+  min-height: 46px;
+  font-family: var(--font-lcd);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.6rem, 8vw, 2.3rem);
+  line-height: 46px;
+  text-align: right;
+  color: var(--lcd-text);
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity 120ms ease;
+}
+
+.display.scale-md {
+  font-size: clamp(1.3rem, 6.2vw, 1.8rem);
+}
+
+.display.scale-sm {
+  font-size: clamp(1.05rem, 5vw, 1.4rem);
+}
+
+.display[aria-busy='true'] {
+  opacity: 0.4;
+}
+
+.display.error {
+  color: var(--lcd-error);
+  font-size: clamp(1rem, 4.5vw, 1.3rem);
+  line-height: 1.35;
+  padding-top: 9px;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.keypad button {
+  min-height: 56px;
+  border: none;
+  border-radius: 11px;
+  background: linear-gradient(var(--key-face-hi), var(--key-face));
+  color: var(--key-text);
+  font-family: inherit;
+  font-size: 1.25rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow:
+    0 3px 0 var(--key-edge),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: filter 90ms ease;
+}
+
+.keypad button:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.keypad button:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow:
+    0 1px 0 var(--key-edge),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.keypad button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.keypad button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.keypad .action {
+  background: linear-gradient(var(--key-fn-hi), var(--key-fn));
+  color: var(--key-fn-text);
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.keypad button[aria-label='all clear'] {
+  background: linear-gradient(var(--key-ac-hi), var(--key-ac));
+  color: var(--key-ac-text);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+}
+
+.keypad .operator {
+  background: linear-gradient(var(--key-op-hi), var(--key-op));
+  color: var(--key-op-text);
+}
+
+.keypad .operator.active {
+  background: var(--key-op-down);
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 0 var(--key-edge),
+    inset 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.keypad .equals {
+  grid-column: span 4;
+  min-height: 52px;
+  background: linear-gradient(var(--key-eq-hi), var(--key-eq));
+  color: var(--key-eq-text);
+  font-size: 1.45rem;
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.tape {
+  list-style: none;
+  margin: 14px 3px 0;
+  padding: 8px 12px;
+  height: 76px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  font-family: var(--font-lcd);
+  font-size: 0.78rem;
+  line-height: 20px;
+  color: #9dab89;
+  overflow: hidden;
+}
+
+.tape li::before {
+  content: '\203a  ';
+  opacity: 0.5;
+}
+
+.tape:empty::after,
+.tape li:last-child::after {
+  content: ' \258c';
+  opacity: 0.5;
+  animation: cursor-blink 1.2s steps(1) infinite;
+}
+
+@keyframes cursor-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tape:empty::after,
+  .tape li:last-child::after {
+    animation: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .keypad {
+    gap: 8px;
+  }
+
+  .keypad button {
+    min-height: 52px;
+  }
+}
